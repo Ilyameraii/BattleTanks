@@ -2,6 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.BattleTanks" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
+        <item name = "windowActionBar">true</item>
+        <item name = "windowNoTitle">false</item>
+        <item name="android:windowFullscreen">false</item>
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
 </resources>
