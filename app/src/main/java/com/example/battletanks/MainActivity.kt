@@ -10,6 +10,8 @@ import android.view.KeyEvent.KEYCODE_DPAD_UP
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.FrameLayout
+import androidx.core.view.marginLeft
+import androidx.core.view.marginTop
 import com.example.battletanks.Direction.UP
 import com.example.battletanks.Direction.DOWN
 import com.example.battletanks.Direction.LEFT
@@ -21,6 +23,8 @@ const val CELL_SIZE = 50
 lateinit var binding: ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private val editMode = false
+
     private val gridDrawer by lazy {
         GridDrawer(this)
     }
@@ -32,7 +36,13 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Menu"
     }
-
+    private fun switchEditMode(){
+        if(editMode){
+            gridDrawer.removeGrid()
+        }  else {
+            gridDrawer.drawGrid()
+        }
+    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.settings, menu)
         return true
@@ -41,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_settings -> {
-                gridDrawer.drawGrid()
+                switchEditMode()
                 return true
             }
 
@@ -63,24 +73,33 @@ class MainActivity : AppCompatActivity() {
         when (direction) {
             UP -> {
                 binding.myTank.rotation = 0f
-                (binding.myTank.layoutParams as FrameLayout.LayoutParams).topMargin += -50
+                if (binding.myTank.marginTop > 0) {
+                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).topMargin += -CELL_SIZE
+                }
             }
 
             DOWN -> {
                 binding.myTank.rotation = 180f
-                (binding.myTank.layoutParams as FrameLayout.LayoutParams).topMargin += 50
+                if (binding.myTank.marginTop + binding.myTank.height < binding.container.height / CELL_SIZE * CELL_SIZE) {
+                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).topMargin += CELL_SIZE
+                }
             }
 
             LEFT -> {
                 binding.myTank.rotation = 270f
-                (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= 50
+                if (binding.myTank.marginLeft > 0) {
+                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= CELL_SIZE
+                }
             }
 
             RIGHT -> {
                 binding.myTank.rotation = 90f
-                (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin += 50
+                if (binding.myTank.marginLeft + binding.myTank.width < binding.container.width / CELL_SIZE * CELL_SIZE) {
+                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin += CELL_SIZE
+                }
             }
         }
+
         binding.container.removeView(binding.myTank)
         binding.container.addView(binding.myTank)
     }
