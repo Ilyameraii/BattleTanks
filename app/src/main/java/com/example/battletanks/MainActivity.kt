@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
             DOWN -> {
                 binding.myTank.rotation = 180f
-                if (binding.myTank.marginTop + binding.myTank.height < binding.container.height / CELL_SIZE * CELL_SIZE) {
+                if (binding.myTank.marginTop - binding.myTank.height < binding.container.height / CELL_SIZE * CELL_SIZE) {
                     (binding.myTank.layoutParams as FrameLayout.LayoutParams).topMargin += CELL_SIZE
                 }
             }

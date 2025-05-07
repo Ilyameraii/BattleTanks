@@ -7,6 +7,7 @@ import android.view.View
 
 class GridDrawer(private val context: Context) {
     private val allLines = mutableListOf<View>()
+
     fun removeGrid(){
         val container = binding.container
         allLines.forEach{
