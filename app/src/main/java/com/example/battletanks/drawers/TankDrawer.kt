@@ -58,7 +58,7 @@ class TankDrawer(val container: FrameLayout) {
     ): Boolean {
         getTankCoordinates(coordinate).forEach {
             val element = getElementByCoordinates(it, elementsOnContainer)
-            if (element != null && !element.material.tankConGoThrough) {
+            if (element != null && !element.material.tankCanGoThrough) {
                 return false
             }
         }
