@@ -22,6 +22,7 @@ import com.example.battletanks.enums.Material
 import com.example.battletanks.drawers.TankDrawer
 import com.example.battletanks.drawers.BulletDrawer
 import android.view.KeyEvent.KEYCODE_SPACE
+import android.view.View.GONE
 
 const val CELL_SIZE = 50
 
@@ -42,9 +43,10 @@ class MainActivity : AppCompatActivity() {
     private val bulletDrawer by lazy {
         BulletDrawer(binding.container)
     }
-    private val levelStorage by lazy{
+    private val levelStorage by lazy {
         LevelStorage(this)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -70,17 +72,28 @@ class MainActivity : AppCompatActivity() {
             return@setOnTouchListener true
         }
         elementsDrawer.drawElementsList(levelStorage.loadLevel())
+        hideSettings()
     }
 
     private fun switchEditMode() {
-        if (editMode) {
-            gridDrawer.removeGrid()
-            binding.materialsContainer.visibility = INVISIBLE
-        } else {
-            gridDrawer.drawGrid()
-            binding.materialsContainer.visibility = VISIBLE
-        }
         editMode = !editMode
+        if (editMode) {
+            showSettings()
+        } else {
+            hideSettings()
+        }
+    }
+
+    private fun showSettings() {
+        gridDrawer.drawGrid()
+        binding.materialsContainer.visibility = VISIBLE
+        elementsDrawer.changeElementsVisibility(true)
+    }
+
+    private fun hideSettings() {
+        gridDrawer.removeGrid()
+        binding.materialsContainer.visibility = GONE
+        elementsDrawer.changeElementsVisibility(false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -94,7 +107,8 @@ class MainActivity : AppCompatActivity() {
                 switchEditMode()
                 return true
             }
-            R.id.menu_save->{
+
+            R.id.menu_save -> {
                 levelStorage.saveLevel(elementsDrawer.elementsOnContainer)
                 return true
             }
