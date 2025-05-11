@@ -1,5 +1,6 @@
 package com.example.battletanks.drawers
 
+import android.app.Activity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -7,6 +8,7 @@ import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.enums.Material
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
+import com.example.battletanks.utils.drawElement
 import com.example.battletanks.utils.getElementByCoordinates
 
 
@@ -25,20 +27,6 @@ class ElementsDrawer(val container: FrameLayout) {
         }
     }
 
-    fun changeElementsVisibility(editMode: Boolean) {
-        elementsOnContainer
-            .filter { it.material.visibleInEditableMode }
-            .forEach { setViewIdVisibility(it.viewId, editMode) }
-    }
-
-    private fun setViewIdVisibility(viewId: Int, editMode: Boolean) {
-        val view = container.findViewById<View>(viewId)
-        if (editMode) {
-            view.visibility = View.VISIBLE
-        } else {
-            view.visibility = View.GONE
-        }
-    }
 
     private fun drawOrReplaceView(coordinate: Coordinate) {
         val viewOnCoordinate = getElementByCoordinates(coordinate, elementsOnContainer)
@@ -110,24 +98,13 @@ class ElementsDrawer(val container: FrameLayout) {
 
     private fun drawView(coordinate: Coordinate) {
         removeUnwantedInstances()
-        val view = ImageView(container.context)
-        val layoutParams = FrameLayout.LayoutParams(
-            currentMaterial.width * CELL_SIZE,
-            currentMaterial.height * CELL_SIZE
-        )
-        view.setImageResource(currentMaterial.image)
-        layoutParams.topMargin = coordinate.top
-        layoutParams.leftMargin = coordinate.left
         val element = Element(
             material = currentMaterial,
             coordinate = coordinate,
             width = currentMaterial.width,
             height = currentMaterial.height
-        )
-        view.id = element.viewId
-        view.layoutParams = layoutParams
-        view.scaleType = ImageView.ScaleType.FIT_XY
-        container.addView(view)
+            )
+        element.drawElement(container)
         elementsOnContainer.add(element)
     }
 }
