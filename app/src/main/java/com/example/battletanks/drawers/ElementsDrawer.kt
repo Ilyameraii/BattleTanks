@@ -16,7 +16,10 @@ class ElementsDrawer(val container: FrameLayout) {
     var currentMaterial = Material.EMPTY
     val elementsOnContainer = mutableListOf<Element>()
 
-    fun onTouchContainer(x: Float, y: Float) {
+    fun onTouchContainer(x: Float, y: Float, isEditMode: Boolean) {
+        if (!isEditMode) {
+            return
+        }
         val topMargin = y.toInt() - (y.toInt() % CELL_SIZE)
         val leftMargin = x.toInt() - (x.toInt() % CELL_SIZE)
         val coordinate = Coordinate(topMargin, leftMargin)
@@ -103,7 +106,7 @@ class ElementsDrawer(val container: FrameLayout) {
             coordinate = coordinate,
             width = currentMaterial.width,
             height = currentMaterial.height
-            )
+        )
         element.drawElement(container)
         elementsOnContainer.add(element)
     }

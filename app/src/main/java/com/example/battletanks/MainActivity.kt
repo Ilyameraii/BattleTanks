@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         binding.editorGrass.setOnClickListener { elementsDrawer.currentMaterial = Material.GRASS }
         binding.editorEagle.setOnClickListener { elementsDrawer.currentMaterial = Material.EAGLE }
         binding.container.setOnTouchListener { _, event ->
-            elementsDrawer.onTouchContainer(event.x, event.y)
+            elementsDrawer.onTouchContainer(event.x, event.y,editMode)
             return@setOnTouchListener true
         }
         elementsDrawer.drawElementsList(levelStorage.loadLevel())
