@@ -11,12 +11,13 @@ import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
 import com.example.battletanks.utils.checkViewCanMoveThroughBorder
 import com.example.battletanks.utils.getElementByCoordinates
+import com.example.battletanks.utils.runOnUiThread
 import kotlinx.coroutines.Runnable
 
 private const val BULLET_WIDTH = 15
 private const val BULLET_HEIGHT = 15
 
-class BulletDrawer(val container: FrameLayout) {
+class BulletDrawer(private val container: FrameLayout) {
 
     private var canBulletGoFurther = true
     private var bulletThread: Thread? = null
@@ -51,12 +52,12 @@ class BulletDrawer(val container: FrameLayout) {
                             (bullet.layoutParams as FrameLayout.LayoutParams).leftMargin
                         )
                     )
-                    (container.context as Activity).runOnUiThread {
+                    container.runOnUiThread {
                         container.removeView(bullet)
                         container.addView(bullet)
                     }
                 }
-                (container.context as Activity).runOnUiThread {
+                container.runOnUiThread {
                     container.removeView(bullet)
                 }
 
@@ -115,16 +116,14 @@ class BulletDrawer(val container: FrameLayout) {
         }
     }
 
-    private fun stopBullet(){
+    private fun stopBullet() {
         canBulletGoFurther = false
     }
 
-    private fun removeView(element: Element?) {
+    private fun removeView(element: Element) {
         val activity = container.context as Activity
         activity.runOnUiThread {
-            if (element != null) {
-                container.removeView(activity.findViewById(element.viewId))
-            }
+            container.removeView(activity.findViewById(element.viewId))
         }
     }
 
