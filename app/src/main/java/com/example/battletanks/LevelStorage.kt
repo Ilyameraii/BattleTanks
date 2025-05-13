@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken
 
 class LevelStorage(val context: Context) {
     private val prefs = (context as Activity).getPreferences(MODE_PRIVATE)
+    private val gson = Gson()
 
     fun saveLevel(elementsOnContainer: List<Element>) {
         prefs.edit()
@@ -18,11 +19,8 @@ class LevelStorage(val context: Context) {
     }
 
     fun loadLevel(): List<Element>? {
-        val levelFromPrefs = prefs.getString(KEY_LEVEL, null)
-        levelFromPrefs?.let {
-            val type = object : TypeToken<List<Element>>() {}.type
-            return Gson().fromJson(it, type)
-        }
-        return null
+        val levelFromPrefs = prefs.getString(KEY_LEVEL, null) ?: return null
+        val type = object : TypeToken<List<Element>>(){}.type
+        return gson.fromJson(levelFromPrefs,type)
     }
 }

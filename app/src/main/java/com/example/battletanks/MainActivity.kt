@@ -1,5 +1,6 @@
 package com.example.battletanks
 
+import android.icu.number.IntegerWidth
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -21,10 +22,13 @@ import com.example.battletanks.drawers.ElementsDrawer
 import com.example.battletanks.enums.Material
 import com.example.battletanks.drawers.BulletDrawer
 import android.view.KeyEvent.KEYCODE_SPACE
+import android.view.ViewTreeObserver
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import com.example.battletanks.drawers.EnemyDrawer
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.enums.Material.PLAYER_TANK
+import com.example.battletanks.enums.Material.EAGLE
 import com.example.battletanks.models.Element
 import com.example.battletanks.models.Tank
 
@@ -35,14 +39,43 @@ lateinit var binding: ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private var editMode = false
-    private val playerTank = Tank(
-        Element(
-            R.id.myTank,
-            PLAYER_TANK,
-            Coordinate(0, 0),
-            PLAYER_TANK.width,
-            PLAYER_TANK.height
-        ), UP
+
+    private lateinit var playerTank: Tank
+    private lateinit var eagle: Element
+
+    private fun createTank(elementWidth: Int, elementHeight: Int): Tank {
+        playerTank = Tank(
+            Element(
+                material = PLAYER_TANK,
+                coordinate = getPlayerTankCoordinate(elementWidth, elementHeight)
+            ), UP
+        )
+        return playerTank
+    }
+
+    private fun createEagle(elementWidth: Int, elementHeight: Int): Element {
+        eagle = Element(
+            material = EAGLE,
+            coordinate = getEagleCoordinate(elementWidth, elementHeight)
+        )
+        return eagle
+    }
+
+    private fun getPlayerTankCoordinate(width: Int, height: Int) = Coordinate(
+        top = (height - height % 2)
+                - (height - height % 2) % CELL_SIZE
+                - PLAYER_TANK.height * CELL_SIZE,
+        left = (width - width % (2 * CELL_SIZE)) / 2
+                - EAGLE.width / 2 * CELL_SIZE
+                - PLAYER_TANK.width * CELL_SIZE
+    )
+
+    private fun getEagleCoordinate(width: Int, height: Int) = Coordinate(
+        top = (height - height % 2)
+                - (height - height % 2) % CELL_SIZE
+                - EAGLE.height * CELL_SIZE,
+        left = (width - width % (2 * CELL_SIZE)) / 2
+                - EAGLE.width / 2 * CELL_SIZE
     )
 
     private val gridDrawer by lazy {
@@ -58,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         LevelStorage(this)
     }
     private val enemyDrawer by lazy {
-        EnemyDrawer(binding.container,elementsDrawer.elementsOnContainer)
+        EnemyDrawer(binding.container, elementsDrawer.elementsOnContainer)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,8 +113,26 @@ class MainActivity : AppCompatActivity() {
             return@setOnTouchListener true
         }
         elementsDrawer.drawElementsList(levelStorage.loadLevel())
+        elementsDrawer.drawElementsList(listOf(playerTank.element, eagle))
         hideSettings()
-        elementsDrawer.elementsOnContainer.add(playerTank.element)
+        countWidthHeight()
+    }
+
+    private fun countWidthHeight() {
+        val frameLayout = binding.container
+        frameLayout.viewTreeObserver
+            .addOnGlobalLayoutListener ( object: OnGlobalLayoutListener{
+                override fun onGlobalLayout() {
+                    frameLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    val elementWidth = frameLayout.width
+                    val elementHeight  = frameLayout.height
+
+                    playerTank = createTank(elementWidth,elementHeight)
+                    eagle= createEagle(elementWidth,elementHeight)
+
+                    elementsDrawer.drawElementsList(listOf(playerTank.element,eagle))
+                }
+            })
     }
 
     private fun switchEditMode() {
@@ -144,7 +195,7 @@ class MainActivity : AppCompatActivity() {
             KEYCODE_DPAD_LEFT -> move(LEFT)
             KEYCODE_DPAD_RIGHT -> move(RIGHT)
             KEYCODE_SPACE -> bulletDrawer.makeBulletMove(
-                binding.myTank,
+                binding.container.findViewById(playerTank.element.viewId),
                 playerTank.direction,
                 elementsDrawer.elementsOnContainer
             )

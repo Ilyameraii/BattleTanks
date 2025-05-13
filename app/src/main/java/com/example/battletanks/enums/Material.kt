@@ -26,7 +26,7 @@ enum class Material(
         false,
         false,
         true,
-        0,
+        1,
         CELLS_TANKS_SIZE,
         CELLS_TANKS_SIZE,
         R.drawable.tank
