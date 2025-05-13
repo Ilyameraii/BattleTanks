@@ -21,7 +21,6 @@ import com.example.battletanks.drawers.ElementsDrawer
 import com.example.battletanks.enums.Material
 import com.example.battletanks.drawers.BulletDrawer
 import android.view.KeyEvent.KEYCODE_SPACE
-import android.view.View.GONE
 import com.example.battletanks.drawers.EnemyDrawer
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         LevelStorage(this)
     }
     private val enemyDrawer by lazy {
-        EnemyDrawer(binding.container)
+        EnemyDrawer(binding.container,elementsDrawer.elementsOnContainer)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,7 +133,8 @@ class MainActivity : AppCompatActivity() {
         if (editMode) {
             return
         }
-        enemyDrawer.startEnemyDrawing(elementsDrawer.elementsOnContainer)
+        enemyDrawer.startEnemyCreation()
+        enemyDrawer.moveEnemyTanks()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
