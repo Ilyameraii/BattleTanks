@@ -14,10 +14,7 @@ class ElementsDrawer(val container: FrameLayout) {
     var currentMaterial = Material.EMPTY
     val elementsOnContainer = mutableListOf<Element>()
 
-    fun onTouchContainer(x: Float, y: Float, isEditMode: Boolean) {
-        if (!isEditMode) {
-            return
-        }
+    fun onTouchContainer(x: Float, y: Float) {
         val topMargin = y.toInt() - (y.toInt() % CELL_SIZE)
         val leftMargin = x.toInt() - (x.toInt() % CELL_SIZE)
         val coordinate = Coordinate(topMargin, leftMargin)
@@ -48,6 +45,7 @@ class ElementsDrawer(val container: FrameLayout) {
             currentMaterial = element.material
             drawElement(element)
         }
+        currentMaterial = Material.EMPTY
     }
 
     private fun replaceView(coordinate: Coordinate) {

@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.FrameLayout
 import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.binding
+import com.example.battletanks.drawers.BulletDrawer
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.enums.Direction.DOWN
 import com.example.battletanks.enums.Direction.LEFT
@@ -18,7 +19,8 @@ import kotlin.random.nextInt
 
 class Tank(
     val element: Element,
-    var direction: Direction
+    var direction: Direction,
+    val bulletDrawer: BulletDrawer
 ) {
     fun move(
         direction: Direction,
