@@ -48,9 +48,10 @@ class MainActivity : AppCompatActivity() {
             Element(
                 material = PLAYER_TANK,
                 coordinate = getPlayerTankCoordinate(elementWidth, elementHeight)
-            ), UP
-        )
-        return playerTank
+            ), UP,
+            BulletDrawer(binding.container,elementsDrawer.elementsOnContainer,enemyDrawer)
+            )
+            return playerTank
     }
 
     private fun createEagle(elementWidth: Int, elementHeight: Int): Element {
@@ -193,10 +194,7 @@ class MainActivity : AppCompatActivity() {
             KEYCODE_DPAD_DOWN -> move(DOWN)
             KEYCODE_DPAD_LEFT -> move(LEFT)
             KEYCODE_DPAD_RIGHT -> move(RIGHT)
-            KEYCODE_SPACE -> playerTank.bulletDrawer.makeBulletMove(
-                playerTank,
-                elementsDrawer.elementsOnContainer
-            )
+            KEYCODE_SPACE -> playerTank.bulletDrawer.makeBulletMove(playerTank)
         }
         return super.onKeyDown(keyCode, event)
     }

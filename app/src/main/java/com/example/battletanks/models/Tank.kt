@@ -11,8 +11,10 @@ import com.example.battletanks.enums.Direction.LEFT
 import com.example.battletanks.enums.Direction.RIGHT
 import com.example.battletanks.enums.Direction.UP
 import com.example.battletanks.enums.Material
+import com.example.battletanks.utils.checkIfChanceBiggerThanRandom
 import com.example.battletanks.utils.checkViewCanMoveThroughBorder
 import com.example.battletanks.utils.getElementByCoordinates
+import com.example.battletanks.utils.getTankByCoordinates
 import com.example.battletanks.utils.runOnUiThread
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -38,10 +40,20 @@ class Tank(
         ) {
             emulateViewMoving(container, view)
             element.coordinate = nextCoordinate
+            generateRandomDirectionForEnemyTank()
         } else {
             element.coordinate = currentCoordinate
             (view.layoutParams as FrameLayout.LayoutParams).topMargin = currentCoordinate.top
             (view.layoutParams as FrameLayout.LayoutParams).leftMargin = currentCoordinate.left
+            changeDirectionForEnemyTank()
+        }
+    }
+
+    private fun generateRandomDirectionForEnemyTank(){
+        if (element.material!=Material.ENEMY_TANK){
+            return
+        }
+        if (checkIfChanceBiggerThanRandom(10)){
             changeDirectionForEnemyTank()
         }
     }
@@ -94,7 +106,10 @@ class Tank(
         elementsOnContainer: List<Element>
     ): Boolean {
         for (anyCoordinate in getTankCoordinates(coordinate)) {
-            val element = getElementByCoordinates(anyCoordinate, elementsOnContainer)
+            var element = getElementByCoordinates(anyCoordinate, elementsOnContainer)
+            if(element == null){
+                element = getTankByCoordinates(anyCoordinate,bulletDrawer.enemyDrawer.tanks)
+            }
             if (element != null && !element.material.tankCanGoThrough) {
                 if (this == element) {
                     continue
