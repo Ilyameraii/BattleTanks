@@ -2,6 +2,7 @@ package com.example.battletanks
 
 import android.app.Activity
 import android.view.View
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.example.battletanks.activites.SCORE_REQUEST_CODE
 import com.example.battletanks.activites.ScoreActivity
@@ -29,19 +30,41 @@ class GameCore(private val activity: Activity) {
         animateEndGame()
     }
 
-    fun playerWon(score:Int){
+    fun resumeTheGame() {
+        isPlay = true
+    }
+
+    fun playerWon(score: Int) {
         isPlayerWin = true
         activity.startActivityForResult(
-            ScoreActivity.createIntent(activity,score),
+            ScoreActivity.createIntent(activity, score),
             SCORE_REQUEST_CODE
         )
     }
 
-    private fun animateEndGame() {
+    fun destroyPlayerOrBase(score:Int){
+        isPlayerOrBaseDestroyed=true
+        pauseTheGame()
+        animateEndGame(score)
+    }
+
+    private fun animateEndGame(score: Int) {
         activity.runOnUiThread {
-            binding.gameOverText.visibility = View.VISIBLE
-            val slideUp = AnimationUtils.loadAnimation(activity, R.anim.slide_up)
+            binding.gameOverText.visibility=View.VISIBLE
+            val slideUp = AnimationUtils.loadAnimation(activity,R.anim.slide_up)
             binding.gameOverText.startAnimation(slideUp)
+            slideUp.setAnimationListener(object : Animation.AnimationListener{
+                override fun onAnimationStart(animation:Animation?){}
+
+                override fun onAnimationRepeat(animation: Animation?){}
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    activity.startActivityForResult(
+                        ScoreActivity.createIntent(activity,score),
+                        SCORE_REQUEST_CODE
+                    )
+                }
+            })
         }
     }
 }
