@@ -1,7 +1,7 @@
 package com.example.battletanks.drawers
 
 import android.widget.FrameLayout
-import com.example.battletanks.CELL_SIZE
+import com.example.battletanks.activites.CELL_SIZE
 import com.example.battletanks.GameCore
 import com.example.battletanks.sounds.MainSoundPlayer
 import com.example.battletanks.enums.CELLS_TANKS_SIZE
@@ -114,7 +114,16 @@ class EnemyDrawer(
         moveEnemyTanks()
     }
 
+    private fun isAllTankDestroyed(): Boolean {
+        return enemyAmount == MAX_ENEMY_AMOUNT && tanks.toList().isEmpty()
+    }
+
+    private fun getPlayerScore() = enemyAmount * 100
+
     fun removeTank(tankIndex: Int) {
         tanks.removeAt(tankIndex)
+        if(isAllTankDestroyed()){
+            gameCore.playerWon(getPlayerScore())
+        }
     }
 }

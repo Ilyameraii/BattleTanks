@@ -1,5 +1,7 @@
-package com.example.battletanks
+package com.example.battletanks.activites
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +25,9 @@ import com.example.battletanks.drawers.BulletDrawer
 import android.view.KeyEvent.KEYCODE_SPACE
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.content.ContextCompat
+import com.example.battletanks.GameCore
+import com.example.battletanks.LevelStorage
+import com.example.battletanks.R
 import com.example.battletanks.drawers.EnemyDrawer
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
@@ -54,11 +59,11 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private val gameCore by lazy{
+    private val gameCore by lazy {
         GameCore(this)
     }
 
-    private val soundManager by lazy{
+    private val soundManager by lazy {
         MainSoundPlayer(this)
     }
 
@@ -108,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         LevelStorage(this)
     }
     private val enemyDrawer by lazy {
-        EnemyDrawer(binding.container, elementsDrawer.elementsOnContainer,soundManager,gameCore)
+        EnemyDrawer(binding.container, elementsDrawer.elementsOnContainer, soundManager, gameCore)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -243,9 +248,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        when(keyCode){
-            KEYCODE_DPAD_UP,KEYCODE_DPAD_LEFT,
-                KEYCODE_DPAD_DOWN,KEYCODE_DPAD_RIGHT -> onButtonReleased()
+        when (keyCode) {
+            KEYCODE_DPAD_UP, KEYCODE_DPAD_LEFT,
+            KEYCODE_DPAD_DOWN, KEYCODE_DPAD_RIGHT -> onButtonReleased()
         }
         return super.onKeyUp(keyCode, event)
     }
@@ -255,9 +260,16 @@ class MainActivity : AppCompatActivity() {
         playerTank.move(direction, binding.container, elementsDrawer.elementsOnContainer)
     }
 
-    fun onButtonReleased(){
-        if(enemyDrawer.tanks.isEmpty()){
+    private fun onButtonReleased() {
+        if (enemyDrawer.tanks.isEmpty()) {
             soundManager.tankStop()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == SCORE_REQUEST_CODE) {
+            recreate()
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

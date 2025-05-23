@@ -2,9 +2,8 @@ package com.example.battletanks.models
 
 import android.view.View
 import android.widget.FrameLayout
-import com.example.battletanks.CELL_SIZE
-import com.example.battletanks.binding
-import com.example.battletanks.drawers.BulletDrawer
+import com.example.battletanks.activites.CELL_SIZE
+import com.example.battletanks.activites.binding
 import com.example.battletanks.drawers.EnemyDrawer
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.enums.Direction.DOWN
