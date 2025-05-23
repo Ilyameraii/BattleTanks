@@ -24,6 +24,9 @@ import com.example.battletanks.drawers.BulletDrawer
 import android.view.KeyEvent.KEYCODE_SPACE
 import android.view.ViewTreeObserver
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import androidx.core.content.ContextCompat
+import com.example.battletanks.GameCore.isPlaying
+import com.example.battletanks.GameCore.startOrPauseGame
 import com.example.battletanks.drawers.EnemyDrawer
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
@@ -40,11 +43,12 @@ lateinit var binding: ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private var editMode = false
+    private lateinit var item: MenuItem
 
     private lateinit var playerTank: Tank
     private lateinit var eagle: Element
 
-    private val bulletDrawer by lazy{
+    private val bulletDrawer by lazy {
         BulletDrawer(
             binding.container,
             elementsDrawer.elementsOnContainer,
@@ -59,8 +63,8 @@ class MainActivity : AppCompatActivity() {
                 coordinate = getPlayerTankCoordinate(elementWidth, elementHeight)
             ), UP,
             enemyDrawer
-            )
-            return playerTank
+        )
+        return playerTank
     }
 
     private fun createEagle(elementWidth: Int, elementHeight: Int): Element {
@@ -114,11 +118,11 @@ class MainActivity : AppCompatActivity() {
             elementsDrawer.currentMaterial = Material.CONCRETE
         }
         binding.editorGrass.setOnClickListener { elementsDrawer.currentMaterial = Material.GRASS }
-        binding.container.setOnTouchListener { _,event->
-            if (!editMode){
+        binding.container.setOnTouchListener { _, event ->
+            if (!editMode) {
                 return@setOnTouchListener true
             }
-            elementsDrawer.onTouchContainer(event.x,event.y)
+            elementsDrawer.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
         }
         elementsDrawer.drawElementsList(levelStorage.loadLevel())
@@ -130,17 +134,17 @@ class MainActivity : AppCompatActivity() {
     private fun countWidthHeight() {
         val frameLayout = binding.container
         frameLayout.viewTreeObserver
-            .addOnGlobalLayoutListener ( object: OnGlobalLayoutListener{
+            .addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     frameLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     val elementWidth = frameLayout.width
-                    val elementHeight  = frameLayout.height
+                    val elementHeight = frameLayout.height
 
-                    playerTank = createTank(elementWidth,elementHeight)
-                    eagle= createEagle(elementWidth,elementHeight)
+                    playerTank = createTank(elementWidth, elementHeight)
+                    eagle = createEagle(elementWidth, elementHeight)
 
-                    elementsDrawer.drawElementsList(listOf(playerTank.element,eagle))
-                    enemyDrawer.bulletDrawer=bulletDrawer
+                    elementsDrawer.drawElementsList(listOf(playerTank.element, eagle))
+                    enemyDrawer.bulletDrawer = bulletDrawer
                 }
             })
     }
@@ -166,6 +170,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.settings, menu)
+        item = menu!!.findItem(R.id.menu_play)
         return true
     }
 
@@ -182,7 +187,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.menu_play -> {
-                startTheGame()
+                if (editMode) {
+                    return true
+                }
+                startOrPauseGame()
+                if (isPlaying()) {
+                    startTheGame()
+                } else {
+                    pauseTheGame()
+                }
                 true
             }
 
@@ -190,15 +203,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun pauseTheGame() {
+        item.icon = ContextCompat.getDrawable(this, R.drawable.ic_play)
+        GameCore.pauseTheGame()
+    }
+    override fun onPause(){
+        super.onPause()
+        pauseTheGame()
+    }
     private fun startTheGame() {
-        if (editMode) {
-            return
-        }
+        item.icon = ContextCompat.getDrawable(this, R.drawable.ic_pause)
         enemyDrawer.startEnemyCreation()
-        enemyDrawer.moveEnemyTanks()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if(!isPlaying()){
+            return super.onKeyDown(keyCode,event)
+        }
         when (keyCode) {
             KEYCODE_DPAD_UP -> move(UP)
             KEYCODE_DPAD_DOWN -> move(DOWN)

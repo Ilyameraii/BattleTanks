@@ -2,6 +2,7 @@ package com.example.battletanks.drawers
 
 import android.widget.FrameLayout
 import com.example.battletanks.CELL_SIZE
+import com.example.battletanks.GameCore.isPlaying
 import com.example.battletanks.enums.CELLS_TANKS_SIZE
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
@@ -21,6 +22,8 @@ class EnemyDrawer(
     private var currentCoordinate: Coordinate
     val tanks = mutableListOf<Tank>()
     lateinit var bulletDrawer: BulletDrawer
+    private var gameStarted = false
+
     init {
         respawnList = getRespawnList()
         currentCoordinate = respawnList[0]
@@ -63,14 +66,18 @@ class EnemyDrawer(
         tanks.add(enemyTank)
     }
 
-    fun moveEnemyTanks() {
+    private fun moveEnemyTanks() {
         Thread({
             while (true) {
+                if(!isPlaying()){
+                    continue
+                }
                 goThroughAllTanks()
                 Thread.sleep(400)
             }
         }).start()
     }
+
     private fun goThroughAllTanks(){
             tanks.toList().forEach{
                 it.move(it.direction,container,elements)
@@ -81,13 +88,21 @@ class EnemyDrawer(
     }
 
     fun startEnemyCreation() {
+        if(gameStarted){
+            return
+        }
+        gameStarted = true
         Thread({
             while (enemyAmount < MAX_ENEMY_AMOUNT) {
+                if(!isPlaying()){
+                    continue
+                }
                 drawEnemy()
                 enemyAmount++
                 Thread.sleep(3000)
             }
         }).start()
+        moveEnemyTanks()
     }
 
     fun removeTank(tankIndex:Int){
