@@ -143,7 +143,6 @@ class MainActivity : AppCompatActivity(), ProgressIndicator {
             return@setOnTouchListener true
         }
         elementsDrawer.drawElementsList(levelStorage.loadLevel())
-        elementsDrawer.drawElementsList(listOf(playerTank.element, eagle))
         hideSettings()
         countWidthHeight()
     }
