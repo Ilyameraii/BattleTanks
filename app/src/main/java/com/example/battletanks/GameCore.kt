@@ -24,12 +24,6 @@ class GameCore(private val activity: Activity) {
         isPlay = false
     }
 
-    fun destroyPlayerOrBase() {
-        isPlayerOrBaseDestroyed = true
-        pauseTheGame()
-        animateEndGame()
-    }
-
     fun resumeTheGame() {
         isPlay = true
     }
