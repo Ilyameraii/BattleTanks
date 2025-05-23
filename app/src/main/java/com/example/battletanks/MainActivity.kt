@@ -29,6 +29,7 @@ import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.enums.Material.PLAYER_TANK
 import com.example.battletanks.enums.Material.EAGLE
+import com.example.battletanks.models.Bullet
 import com.example.battletanks.models.Element
 import com.example.battletanks.models.Tank
 
@@ -43,13 +44,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var playerTank: Tank
     private lateinit var eagle: Element
 
+    private val bulletDrawer by lazy{
+        BulletDrawer(
+            binding.container,
+            elementsDrawer.elementsOnContainer,
+            enemyDrawer
+        )
+    }
+
     private fun createTank(elementWidth: Int, elementHeight: Int): Tank {
         playerTank = Tank(
             Element(
                 material = PLAYER_TANK,
                 coordinate = getPlayerTankCoordinate(elementWidth, elementHeight)
             ), UP,
-            BulletDrawer(binding.container,elementsDrawer.elementsOnContainer,enemyDrawer)
+            enemyDrawer
             )
             return playerTank
     }
@@ -131,6 +140,7 @@ class MainActivity : AppCompatActivity() {
                     eagle= createEagle(elementWidth,elementHeight)
 
                     elementsDrawer.drawElementsList(listOf(playerTank.element,eagle))
+                    enemyDrawer.bulletDrawer=bulletDrawer
                 }
             })
     }
@@ -194,7 +204,7 @@ class MainActivity : AppCompatActivity() {
             KEYCODE_DPAD_DOWN -> move(DOWN)
             KEYCODE_DPAD_LEFT -> move(LEFT)
             KEYCODE_DPAD_RIGHT -> move(RIGHT)
-            KEYCODE_SPACE -> playerTank.bulletDrawer.makeBulletMove(playerTank)
+            KEYCODE_SPACE -> bulletDrawer.addNewBulletForTank(playerTank)
         }
         return super.onKeyDown(keyCode, event)
     }

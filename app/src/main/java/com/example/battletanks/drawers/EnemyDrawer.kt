@@ -2,7 +2,6 @@ package com.example.battletanks.drawers
 
 import android.widget.FrameLayout
 import com.example.battletanks.CELL_SIZE
-import com.example.battletanks.binding
 import com.example.battletanks.enums.CELLS_TANKS_SIZE
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
@@ -11,8 +10,6 @@ import com.example.battletanks.enums.Material.ENEMY_TANK
 import com.example.battletanks.models.Tank
 import com.example.battletanks.utils.checkIfChanceBiggerThanRandom
 import com.example.battletanks.utils.drawElement
-import kotlin.math.E
-
 private const val MAX_ENEMY_AMOUNT = 20
 
 class EnemyDrawer(
@@ -24,7 +21,7 @@ class EnemyDrawer(
     private var currentCoordinate: Coordinate
     val tanks = mutableListOf<Tank>()
     private var moveAllTanksThread:Thread? = null
-
+    lateinit var bulletDrawer: BulletDrawer
     init {
         respawnList = getRespawnList()
         currentCoordinate = respawnList[0]
@@ -61,7 +58,7 @@ class EnemyDrawer(
                 material = ENEMY_TANK,
                 coordinate = currentCoordinate
             ), Direction.DOWN,
-            BulletDrawer(container,elements,this)
+            this
         )
         enemyTank.element.drawElement(container)
         tanks.add(enemyTank)
@@ -80,7 +77,7 @@ class EnemyDrawer(
             tanks.forEach{
                 it.move(it.direction,container,elements)
                 if (checkIfChanceBiggerThanRandom(10)) {
-                    it.bulletDrawer.makeBulletMove(it)
+                    bulletDrawer.addNewBulletForTank(it)
                 }
             }
         })

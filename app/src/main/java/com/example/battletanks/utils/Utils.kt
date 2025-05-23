@@ -67,3 +67,9 @@ fun FrameLayout.runOnUiThread(block:()->Unit){
 fun checkIfChanceBiggerThanRandom(percentChance:Int):Boolean{
     return Random.nextInt(TOTAL_PERCENT)<=percentChance
 }
+fun View.getViewCoordinate(): Coordinate {
+    return Coordinate(
+        (this.layoutParams as FrameLayout.LayoutParams).topMargin,
+        (this.layoutParams as FrameLayout.LayoutParams).leftMargin
+    )
+}
