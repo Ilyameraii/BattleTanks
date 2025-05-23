@@ -3,6 +3,7 @@ package com.example.battletanks.drawers
 import android.widget.FrameLayout
 import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.GameCore.isPlaying
+import com.example.battletanks.SoundManager
 import com.example.battletanks.enums.CELLS_TANKS_SIZE
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
@@ -11,6 +12,7 @@ import com.example.battletanks.enums.Material.ENEMY_TANK
 import com.example.battletanks.models.Tank
 import com.example.battletanks.utils.checkIfChanceBiggerThanRandom
 import com.example.battletanks.utils.drawElement
+
 private const val MAX_ENEMY_AMOUNT = 20
 
 class EnemyDrawer(
@@ -69,7 +71,7 @@ class EnemyDrawer(
     private fun moveEnemyTanks() {
         Thread({
             while (true) {
-                if(!isPlaying()){
+                if (!isPlaying()) {
                     continue
                 }
                 goThroughAllTanks()
@@ -78,23 +80,28 @@ class EnemyDrawer(
         }).start()
     }
 
-    private fun goThroughAllTanks(){
-            tanks.toList().forEach{
-                it.move(it.direction,container,elements)
-                if (checkIfChanceBiggerThanRandom(10)) {
-                    bulletDrawer.addNewBulletForTank(it)
-                }
+    private fun goThroughAllTanks() {
+        if (tanks.isNotEmpty()) {
+            SoundManager.tankMove()
+        } else {
+            SoundManager.tankStop()
+        }
+        tanks.toList().forEach {
+            it.move(it.direction, container, elements)
+            if (checkIfChanceBiggerThanRandom(10)) {
+                bulletDrawer.addNewBulletForTank(it)
             }
+        }
     }
 
     fun startEnemyCreation() {
-        if(gameStarted){
+        if (gameStarted) {
             return
         }
         gameStarted = true
         Thread({
             while (enemyAmount < MAX_ENEMY_AMOUNT) {
-                if(!isPlaying()){
+                if (!isPlaying()) {
                     continue
                 }
                 drawEnemy()
@@ -105,8 +112,7 @@ class EnemyDrawer(
         moveEnemyTanks()
     }
 
-    fun removeTank(tankIndex:Int){
-        if(tankIndex<0)return
+    fun removeTank(tankIndex: Int) {
         tanks.removeAt(tankIndex)
     }
 }

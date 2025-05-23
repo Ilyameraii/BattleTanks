@@ -7,6 +7,7 @@ import android.widget.ImageView
 import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.GameCore.isPlaying
 import com.example.battletanks.R
+import com.example.battletanks.SoundManager
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.enums.Material
 import com.example.battletanks.models.Bullet
@@ -18,6 +19,7 @@ import com.example.battletanks.utils.checkViewCanMoveThroughBorder
 import com.example.battletanks.utils.getTankByCoordinates
 import com.example.battletanks.utils.getViewCoordinate
 import com.example.battletanks.utils.runOnUiThread
+import com.example.battletanks.drawers.EnemyDrawer
 
 private const val BULLET_WIDTH = 15
 private const val BULLET_HEIGHT = 15
@@ -37,6 +39,7 @@ class BulletDrawer(
         val view = container.findViewById<View>(tank.element.viewId) ?: return
         if (tank.alreadyHasBullet()) return
         allBullets.add(Bullet(createBullet(view, tank.direction), tank.direction, tank))
+        SoundManager.bulletShot()
     }
 
     private fun Tank.alreadyHasBullet(): Boolean =
@@ -154,7 +157,9 @@ class BulletDrawer(
     private fun removeTank(element: Element) {
         val tanksElements = enemyDrawer.tanks.map { it.element }
         val tankIndex = tanksElements.indexOf(element)
-        EnemyDrawer.removeTank(tankIndex)
+        if(tankIndex<0)return
+        SoundManager.bulletBurst()
+        enemyDrawer.removeTank(tankIndex)
     }
 
     private fun stopBullet(bullet: Bullet) {
