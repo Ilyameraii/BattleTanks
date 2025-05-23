@@ -36,6 +36,7 @@ import com.example.battletanks.enums.Material.EAGLE
 import com.example.battletanks.models.Element
 import com.example.battletanks.models.Tank
 import com.example.battletanks.sounds.MainSoundPlayer
+import com.example.battletanks.sounds.ScoreSoundPlayer
 
 
 const val CELL_SIZE = 50
@@ -115,6 +116,7 @@ class MainActivity : AppCompatActivity() {
     private val enemyDrawer by lazy {
         EnemyDrawer(binding.container, elementsDrawer.elementsOnContainer, soundManager, gameCore)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
