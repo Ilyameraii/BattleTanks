@@ -78,7 +78,7 @@ class BulletDrawer(
             }
             bullet.stopIntersectingBullets()
         }
-
+        removeInconsistentBullets()
     }
 
     private fun removeInconsistentBullets() {
