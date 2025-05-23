@@ -23,6 +23,7 @@ import com.example.battletanks.drawers.ElementsDrawer
 import com.example.battletanks.enums.Material
 import com.example.battletanks.drawers.BulletDrawer
 import android.view.KeyEvent.KEYCODE_SPACE
+import android.view.View.GONE
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.content.ContextCompat
 import com.example.battletanks.GameCore
@@ -37,13 +38,14 @@ import com.example.battletanks.models.Element
 import com.example.battletanks.models.Tank
 import com.example.battletanks.sounds.MainSoundPlayer
 import com.example.battletanks.sounds.ScoreSoundPlayer
+import com.example.battletanks.utils.ProgressIndicator
 
 
 const val CELL_SIZE = 50
 
 lateinit var binding: ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ProgressIndicator {
     private var editMode = false
     private lateinit var item: MenuItem
 
@@ -65,7 +67,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val soundManager by lazy {
-        MainSoundPlayer(this)
+        MainSoundPlayer(this, this)
     }
 
     private fun createTank(elementWidth: Int, elementHeight: Int): Tank {
@@ -273,5 +275,18 @@ class MainActivity : AppCompatActivity() {
             recreate()
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun showProgress() {
+        binding.container.visibility = INVISIBLE
+        binding.totalContainer.setBackgroundResource(R.color.gray)
+        binding.initTitle.visibility = VISIBLE
+    }
+
+    override fun dismissProgress() {
+        Thread.sleep(3000L)
+        binding.container.visibility = VISIBLE
+        binding.totalContainer.setBackgroundResource(R.color.black)
+        binding.initTitle.visibility = GONE
     }
 }

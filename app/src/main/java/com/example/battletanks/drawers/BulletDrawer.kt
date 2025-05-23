@@ -15,7 +15,7 @@ import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
 import com.example.battletanks.models.Tank
 import com.example.battletanks.utils.checkViewCanMoveThroughBorder
-    import com.example.battletanks.utils.getElementByCoordinates
+import com.example.battletanks.utils.getElementByCoordinates
 import com.example.battletanks.utils.getTankByCoordinates
 import com.example.battletanks.utils.getViewCoordinate
 import com.example.battletanks.utils.runOnUiThread
@@ -49,7 +49,7 @@ class BulletDrawer(
     private fun moveAllBullets() {
         Thread({
             while (true) {
-                if(!gameCore.isPlaying()){
+                if (!gameCore.isPlaying()) {
                     continue
                 }
                 interactWithAllBullets()
@@ -80,7 +80,8 @@ class BulletDrawer(
         }
 
     }
-    private fun removeInconsistentBullets(){
+
+    private fun removeInconsistentBullets() {
         val removingList = allBullets.filter { !it.canMoveFurther }
         removingList.forEach {
             stopBullet(it)
@@ -90,20 +91,22 @@ class BulletDrawer(
         }
         allBullets.removeAll(removingList)
     }
-    private fun Bullet.stopIntersectingBullets(){
+
+    private fun Bullet.stopIntersectingBullets() {
         val bulletCoordinate = this.view.getViewCoordinate()
-        for(bulletInList in allBullets){
+        for (bulletInList in allBullets) {
             val coordinateList = bulletInList.view.getViewCoordinate()
-            if(this==bulletInList){
+            if (this == bulletInList) {
                 continue
             }
-            if(coordinateList==bulletCoordinate){
+            if (coordinateList == bulletCoordinate) {
                 stopBullet(this)
                 stopBullet(bulletInList)
                 return
             }
         }
     }
+
     private fun Bullet.canBulletGoFurther() =
         this.view.checkViewCanMoveThroughBorder(this.view.getViewCoordinate())
                 && this.canMoveFurther
@@ -122,9 +125,9 @@ class BulletDrawer(
 
     private fun compareCollection(detectedCoordinatesList: List<Coordinate>, bullet: Bullet) {
         for (coordinate in detectedCoordinatesList) {
-            var element = getElementByCoordinates(coordinate, elements)
+            var element = getTankByCoordinates(coordinate, enemyDrawer.tanks)
             if (element == null) {
-                element = getTankByCoordinates(coordinate, enemyDrawer.tanks)
+                element = getElementByCoordinates(coordinate, elements)
             }
             if (element == bullet.tank.element) {
                 continue
@@ -135,19 +138,20 @@ class BulletDrawer(
 
     private fun removeElementsAndStopBullet(element: Element?, bullet: Bullet) {
         if (element != null) {
-            if (element.material.bulletCanGoThrough) {
-                return
-            }
             if (bullet.tank.element.material == Material.ENEMY_TANK
                 && element.material == Material.ENEMY_TANK
             ) {
                 stopBullet(bullet)
                 return
             }
+            if (element.material.bulletCanGoThrough) {
+                return
+            }
             if (element.material.simpleBulletCanDestroy) {
                 stopBullet(bullet)
                 removeView(element)
                 removeElement(element)
+                stopGameIfNecessary(element)
                 removeTank(element)
             } else {
                 stopBullet(bullet)
@@ -155,9 +159,12 @@ class BulletDrawer(
         }
     }
 
-    private fun removeElement(element:Element){
+    private fun removeElement(element: Element) {
         elements.remove(element)
-        if(element.material == Material.PLAYER_TANK||element.material==Material.EAGLE){
+    }
+
+    private fun stopGameIfNecessary(element: Element) {
+        if (element.material == Material.PLAYER_TANK || element.material == Material.EAGLE) {
             gameCore.destroyPlayerOrBase()
         }
     }
@@ -165,7 +172,7 @@ class BulletDrawer(
     private fun removeTank(element: Element) {
         val tanksElements = enemyDrawer.tanks.map { it.element }
         val tankIndex = tanksElements.indexOf(element)
-        if(tankIndex<0)return
+        if (tankIndex < 0) return
         mainSoundPlayer.bulletBurst()
         enemyDrawer.removeTank(tankIndex)
     }
