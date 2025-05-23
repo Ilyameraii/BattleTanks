@@ -2,7 +2,7 @@ package com.example.battletanks.drawers
 
 import android.widget.FrameLayout
 import com.example.battletanks.CELL_SIZE
-import com.example.battletanks.GameCore.isPlaying
+import com.example.battletanks.GameCore
 import com.example.battletanks.SoundManager
 import com.example.battletanks.enums.CELLS_TANKS_SIZE
 import com.example.battletanks.enums.Direction
@@ -17,7 +17,9 @@ private const val MAX_ENEMY_AMOUNT = 20
 
 class EnemyDrawer(
     private val container: FrameLayout,
-    private val elements: MutableList<Element>
+    private val elements: MutableList<Element>,
+    private val soundManager: SoundManager,
+    private val gameCore: GameCore
 ) {
     private val respawnList: List<Coordinate>
     private var enemyAmount = 0
@@ -71,7 +73,7 @@ class EnemyDrawer(
     private fun moveEnemyTanks() {
         Thread({
             while (true) {
-                if (!isPlaying()) {
+                if (!gameCore.isPlaying()) {
                     continue
                 }
                 goThroughAllTanks()
@@ -82,9 +84,9 @@ class EnemyDrawer(
 
     private fun goThroughAllTanks() {
         if (tanks.isNotEmpty()) {
-            SoundManager.tankMove()
+            soundManager.tankMove()
         } else {
-            SoundManager.tankStop()
+            soundManager.tankStop()
         }
         tanks.toList().forEach {
             it.move(it.direction, container, elements)
@@ -101,7 +103,7 @@ class EnemyDrawer(
         gameStarted = true
         Thread({
             while (enemyAmount < MAX_ENEMY_AMOUNT) {
-                if (!isPlaying()) {
+                if (!gameCore.isPlaying()) {
                     continue
                 }
                 drawEnemy()
