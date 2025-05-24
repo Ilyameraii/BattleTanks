@@ -16,6 +16,7 @@ class ScoreActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_SCORE = "extra_score"
+
         fun createIntent(context: Context, score: Int): Intent {
             return Intent(context, ScoreActivity::class.java)
                 .apply {
@@ -41,7 +42,7 @@ class ScoreActivity : AppCompatActivity() {
                 Thread.sleep(150)
             }
             scoreSoundPlayer.pauseScoreSound()
-        })
+        }).start()
     }
 
     var score = 0

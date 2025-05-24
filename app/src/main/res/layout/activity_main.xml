@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/total_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/black"
-    android:id="@+id/total_container">
+    android:fitsSystemWindows="true"
+    android:background="@color/black">
+
     <TextView
         android:id="@+id/init_title"
         android:layout_width="wrap_content"
@@ -22,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
     <FrameLayout
         android:id="@+id/container"
@@ -39,14 +41,14 @@
             android:id="@+id/game_over_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
             android:text="Game\nover"
             android:textColor="#FF0000"
             android:textSize="64sp"
             android:textStyle="bold"
-            android:layout_gravity="center"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="visible" />
     </FrameLayout>
 
     <LinearLayout

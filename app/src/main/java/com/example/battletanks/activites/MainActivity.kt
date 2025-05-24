@@ -37,7 +37,6 @@ import com.example.battletanks.enums.Material.EAGLE
 import com.example.battletanks.models.Element
 import com.example.battletanks.models.Tank
 import com.example.battletanks.sounds.MainSoundPlayer
-import com.example.battletanks.sounds.ScoreSoundPlayer
 import com.example.battletanks.utils.ProgressIndicator
 
 
@@ -140,7 +139,7 @@ class MainActivity : AppCompatActivity(), ProgressIndicator {
                 return@setOnTouchListener true
             }
             elementsDrawer.onTouchContainer(event.x, event.y)
-            return@setOnTouchListener true
+              return@setOnTouchListener true
         }
         elementsDrawer.drawElementsList(levelStorage.loadLevel())
         hideSettings()
