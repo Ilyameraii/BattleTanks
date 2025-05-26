@@ -28,6 +28,10 @@ class ElementsDrawer(val container: FrameLayout) {
 
     private fun drawOrReplaceView(coordinate: Coordinate) {
         val viewOnCoordinate = getElementByCoordinates(coordinate, elementsOnContainer)
+        if(viewOnCoordinate?.material == Material.EAGLE||
+            viewOnCoordinate?.material == Material.PLAYER_TANK){
+            return
+        }
         if (viewOnCoordinate == null) {
             createElementDrawView(coordinate)
             return
@@ -94,11 +98,13 @@ class ElementsDrawer(val container: FrameLayout) {
             }
         }
     }
-    private fun drawElement(element: Element){
+
+    private fun drawElement(element: Element) {
         removeUnwantedInstances()
         element.drawElement(container)
         elementsOnContainer.add(element)
     }
+
     private fun createElementDrawView(coordinate: Coordinate) {
         val element = Element(
             material = currentMaterial,

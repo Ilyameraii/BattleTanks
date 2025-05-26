@@ -1,6 +1,7 @@
 package com.example.battletanks.drawers
 
 import android.app.Activity
+import android.graphics.Rect
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -94,12 +95,23 @@ class BulletDrawer(
 
     private fun Bullet.stopIntersectingBullets() {
         val bulletCoordinate = this.view.getViewCoordinate()
+        val leftBulletCoordinate = bulletCoordinate.left
+        val rightBulletCoordinate = bulletCoordinate.left + BULLET_WIDTH
+        val topBulletCoordinate = bulletCoordinate.top
+        val bottomBulletCoordinate = bulletCoordinate.top + BULLET_WIDTH
         for (bulletInList in allBullets) {
             val coordinateList = bulletInList.view.getViewCoordinate()
-            if (this == bulletInList) {
+            val leftCoordinateList = coordinateList.left
+            val rightCoordinateList = coordinateList.left + BULLET_WIDTH
+            val topCoordinateList = coordinateList.top
+            val bottomCoordinateList = coordinateList.top + BULLET_WIDTH
+
+            if (this == bulletInList) { // чтобы пуля сама об себя не уничтожалась
                 continue
             }
-            if (coordinateList == bulletCoordinate) {
+            if ((leftBulletCoordinate < rightCoordinateList && rightBulletCoordinate > leftCoordinateList) && //сравнение совпадение по вертикали
+                (topBulletCoordinate < bottomCoordinateList && bottomBulletCoordinate > topCoordinateList) //сравнение совпадение по горизонтали
+            ) {
                 stopBullet(this)
                 stopBullet(bulletInList)
                 return
